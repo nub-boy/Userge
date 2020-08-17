@@ -48,7 +48,7 @@ async def auto(message: Message):
 async def _worker():
     count = 0
     while UPDATE_:
-        if not count % 30:
+        if not count % 40:
             try:
                 chat_id = [-342245068, -455937686, -482461535, -459866909, -481555266,
                            -462977547, -440401481, -495471654, -467412207, -329855110,
