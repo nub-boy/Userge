@@ -48,7 +48,7 @@ async def auto(message: Message):
 async def _worker():
     count = 0
     while UPDATE_:
-        if not count % 40:
+        if not count % 30:
             try:
                 chat_id = [-342245068, -455937686, -482461535, -459866909, -481555266,
                            -462977547, -440401481, -495471654, -467412207, -329855110,
@@ -63,7 +63,7 @@ async def _worker():
                            ]
                 for e in range(50):
                     await userge.send_message(chat_id[e], "/guess")
-                    await asyncio.sleep(1)
+                    await asyncio.sleep(2)
             except FloodWait as s_c:
                 time.sleep(s_c.x)
                 LOG.info(s_c.x)
