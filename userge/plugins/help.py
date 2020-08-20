@@ -102,6 +102,21 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                     show_alert=True)
         return wrapper
 
+
+    def check_users(func):
+        async def prvt_wrapper(_, c_q: CallbackQuery):
+            if c_q.from_user.id == PRVT_MSG['_id'] or c_q.from_user.id = Config.OWNER_ID:
+                try:
+                    await func(c_q)
+                except Exception:
+                    pass
+            else:
+                await c_q.answer(
+                    f"Sorry, you can't see this Private Msg... 😔",
+                    show_alert=True)
+        return prvt_wrapper
+
+
     @ubot.on_callback_query(filters=Filters.regex(pattern=r"\((.+)\)(next|prev)\((\d+)\)"))
     @check_owner
     async def callback_next_prev(callback_query: CallbackQuery):
@@ -333,8 +348,15 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         buttons = [tmp_btns] + buttons
         return text, buttons
 
+
+    @ubot.on_callback_query(filters=Filters.regex(pattern=r"^prvtmsg$"))
+    @check_users
+    async def prvt_msg(_, c_q: CallbackQuery): 
+        prvt_msg = PRVT_MSG["msg"]
+        await c_q.answer(prvt_msg, show_alert=True)
+
     @ubot.on_inline_query()
-    async def inline_answer(_, inline_query: InlineQuery):
+    async def inline_answer(_, inline_query: InlineQuery, msg: Message):
         results = [
             InlineQueryResultArticle(
                 id=uuid4(),
@@ -361,17 +383,39 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
             )
         ]
         if inline_query.from_user and inline_query.from_user.id == Config.OWNER_ID:
-            results.append(
-                InlineQueryResultArticle(
-                    id=uuid4(),
-                    title="Main Menu",
-                    input_message_content=InputTextMessageContent(
-                        "🖥 **Userge Main Menu** 🖥"
-                    ),
-                    url="https://github.com/UsergeTeam/Userge",
-                    description="Userge Main Menu",
-                    thumb_url="https://imgur.com/download/Inyeb1S",
-                    reply_markup=InlineKeyboardMarkup(main_menu_buttons())
+            if inline_query.query:
+                username, msg = inline_query.query.split('-', maxsplit=1)
+                prvt_msg = [[InlineKeyboardButton("Show Message 🔐", callback_data="prvtmsg")]]
+                try:
+                    user = await msg.client.get_users(username.strip())
+                except Exception:
+                    pass
+                await PRVT_MSG.clear()
+                PRVT_MSG['_id'] = user.id
+                PRVT_MSG['msg'] = msg.strip()
+                msg_c = f"🔒 A private message to {user.username}, Only he/she can open it."
+                results.append(
+                    InlineQueryResultArticle(
+                        id=uuid4(),
+                        title=f"A Private Msg to {user.first_name}",
+                        input_message_content=InputTextMessageContent(msg_c),
+                        description="Only he/she can open it",
+                        thumb_url="https://imgur.com/download/Inyeb1S",
+                        reply_markup=InlineKeyboardMarkup(prvt_msg)
+                    )
                 )
-            )
+            else:
+                results.append(
+                    InlineQueryResultArticle(
+                        id=uuid4(),
+                        title="Main Menu",
+                        input_message_content=InputTextMessageContent(
+                            "🖥 **Userge Main Menu** 🖥"
+                        ),
+                        url="https://github.com/UsergeTeam/Userge",
+                        description="Userge Main Menu",
+                        thumb_url="https://imgur.com/download/Inyeb1S",
+                        reply_markup=InlineKeyboardMarkup(main_menu_buttons())
+                    )
+                )
         await inline_query.answer(results=results, cache_time=1)
