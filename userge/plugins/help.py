@@ -31,6 +31,7 @@ _CATEGORY = {
     'plugins': '💎'
 }
 SAVED_SETTINGS = get_collection("CONFIGS")
+PRVT_MSG = {}
 
 
 async def _init() -> None:
