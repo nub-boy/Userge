@@ -357,7 +357,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         await c_q.answer(prvt_msg, show_alert=True)
 
     @ubot.on_inline_query()
-    async def inline_answer(_, inline_query: InlineQuery, msg: Message):
+    async def inline_answer(_, inline_query: InlineQuery):
         results = [
             InlineQueryResultArticle(
                 id=uuid4(),
@@ -388,7 +388,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 username, msg = inline_query.query.split('-', maxsplit=1)
                 prvt_msg = [[InlineKeyboardButton("Show Message 🔐", callback_data="prvtmsg")]]
                 try:
-                    user = await msg.client.get_users(username.strip())
+                    user = await userge.get_users(username.strip())
                 except Exception:
                     pass
                 await PRVT_MSG.clear()
