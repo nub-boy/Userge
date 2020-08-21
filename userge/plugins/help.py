@@ -384,14 +384,27 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
             )
         ]
         if inline_query.from_user and inline_query.from_user.id == Config.OWNER_ID:
-            if inline_query.query:
+            results.append(
+                InlineQueryResultArticle(
+                    id=uuid4(),
+                    title="Main Menu",
+                    input_message_content=InputTextMessageContent(
+                        "🖥 **Userge Main Menu** 🖥"
+                    ),
+                    url="https://github.com/UsergeTeam/Userge",
+                    description="Userge Main Menu",
+                    thumb_url="https://imgur.com/download/Inyeb1S",
+                    reply_markup=InlineKeyboardMarkup(main_menu_buttons())
+                )
+            )
+            if '-' in inline_query.query:
                 username, msg = inline_query.query.split('-', maxsplit=1)
                 PRVT_MSG.clear()
                 prvt_msg = [[InlineKeyboardButton("Show Message 🔐", callback_data="prvtmsg")]]
                 try:
                     user = await userge.get_users(username.strip())
                 except Exception:
-                    pass
+                    return
 
                 PRVT_MSG['_id'] = user.id
                 PRVT_MSG['msg'] = msg.strip()
@@ -404,20 +417,6 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                         description="Only he/she can open it",
                         thumb_url="https://imgur.com/download/Inyeb1S",
                         reply_markup=InlineKeyboardMarkup(prvt_msg)
-                    )
-                )
-            else:
-                results.append(
-                    InlineQueryResultArticle(
-                        id=uuid4(),
-                        title="Main Menu",
-                        input_message_content=InputTextMessageContent(
-                            "🖥 **Userge Main Menu** 🖥"
-                        ),
-                        url="https://github.com/UsergeTeam/Userge",
-                        description="Userge Main Menu",
-                        thumb_url="https://imgur.com/download/Inyeb1S",
-                        reply_markup=InlineKeyboardMarkup(main_menu_buttons())
                     )
                 )
         await inline_query.answer(results=results, cache_time=1)
