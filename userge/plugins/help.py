@@ -393,7 +393,6 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 except Exception:
                     pass
 
-
                 PRVT_MSG['_id'] = user.id
                 PRVT_MSG['msg'] = msg.strip()
                 msg_c = f"🔒 A private message to {user.username}, Only he/she can open it."
