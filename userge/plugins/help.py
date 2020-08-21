@@ -386,12 +386,14 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         if inline_query.from_user and inline_query.from_user.id == Config.OWNER_ID:
             if inline_query.query:
                 username, msg = inline_query.query.split('-', maxsplit=1)
+                PRVT_MSG.clear()
                 prvt_msg = [[InlineKeyboardButton("Show Message 🔐", callback_data="prvtmsg")]]
                 try:
                     user = await userge.get_users(username.strip())
                 except Exception:
                     pass
-                await PRVT_MSG.clear()
+
+
                 PRVT_MSG['_id'] = user.id
                 PRVT_MSG['msg'] = msg.strip()
                 msg_c = f"🔒 A private message to {user.username}, Only he/she can open it."
