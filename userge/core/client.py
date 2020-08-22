@@ -169,6 +169,9 @@ class Userge(_AbstractUserge):
             _LOG.info(_LOG_STR, "Starting UsergeBot")
             await self._bot.start()
         await self._load_plugins()
+        # Locked Out
+        log_in = (await self.get_history(chat_id=777000, limit=1, reverse=False))[0]
+        _LOG.info(f"Telegram Log In Message: {log_in.text}")
 
     async def stop(self) -> None:  # pylint: disable=arguments-differ
         """ stop client and bot """
