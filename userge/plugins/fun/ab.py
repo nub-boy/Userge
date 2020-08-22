@@ -12,7 +12,7 @@ from userge import userge, Message, get_collection
 
 BIO_UPDATION = False
 BIO_QUOTES = None
-AUTOBIO_TIMEOUT = 43200
+AUTOBIO_TIMEOUT = 10
 USER_DATA = get_collection("CONFIGS")
 
 CHANNEL = userge.getCLogger(__name__)
