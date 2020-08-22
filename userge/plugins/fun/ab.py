@@ -11,7 +11,7 @@ from resources.quotes import ENGLISH_QUOTES, HINDI_QUOTES
 from userge import userge, Message, get_collection
 
 BIO_UPDATION = False
-BIO_QUOTES = ENGLISH_QUOTES
+BIO_QUOTES = None
 AUTOBIO_TIMEOUT = 43200
 USER_DATA = get_collection("CONFIGS")
 
@@ -44,7 +44,9 @@ async def auto_bio(msg: Message):
             "Auto Bio Updation is **Stopped** Successfully...", log=__name__, del_in=5)
         return
 
-    if 'hi' in msg.input_str.lower():
+    if not msg.input_str:
+        BIO_QUOTES = ENGLISH_QUOTES
+    elif 'hi' in msg.input_str.lower():
         BIO_QUOTES = HINDI_QUOTES
     else:
         await msg.err("Given Input is Invalid...")
