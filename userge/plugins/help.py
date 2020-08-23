@@ -389,7 +389,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 PRVT_MSG.clear()
                 prvte_msg = [[InlineKeyboardButton("Show Message 🔐", callback_data="prvtmsg")]]
                 try:
-                    user = await userge.get_user_dict(username.strip())
+                    user = await ubot.get_user_dict(username.strip())
                 except Exception:
                     return
 
