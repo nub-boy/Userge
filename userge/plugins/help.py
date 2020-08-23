@@ -103,21 +103,6 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                     show_alert=True)
         return wrapper
 
-
-    def check_users(func):
-        async def prvt_wrapper(_, c_q: CallbackQuery):
-            if c_q.from_user.id == PRVT_MSG['_id'] or c_q.from_user.id == Config.OWNER_ID:
-                try:
-                    await func(c_q)
-                except Exception:
-                    pass
-            else:
-                await c_q.answer(
-                    f"Sorry, you can't see this Private Msg... 😔",
-                    show_alert=True)
-        return prvt_wrapper
-
-
     @ubot.on_callback_query(filters=Filters.regex(pattern=r"\((.+)\)(next|prev)\((\d+)\)"))
     @check_owner
     async def callback_next_prev(callback_query: CallbackQuery):
@@ -351,10 +336,12 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
 
 
     @ubot.on_callback_query(filters=Filters.regex(pattern=r"^prvtmsg$"))
-    @check_users
-    async def prvt_msg(_, c_q: CallbackQuery): 
-        prvt_msg = PRVT_MSG["msg"]
-        await c_q.answer(prvt_msg, show_alert=True)
+    async def prvt_msg_cq(_, c_q: CallbackQuery):
+        if c_q.from_user.id == PRVT_MSG['_id'] or c_q.from_user.id == Config.OWNER_ID:
+            await c_q.answer(PRVT_MSG["msg"], show_alert=True)
+        else:
+            await c_q.answer(
+                f"Sorry, you can't see this Private Msg... 😔", show_alert=True)
 
     @ubot.on_inline_query()
     async def inline_answer(_, inline_query: InlineQuery):
