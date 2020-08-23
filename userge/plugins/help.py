@@ -207,6 +207,15 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         await callback_query.edit_message_text(
             text, reply_markup=InlineKeyboardMarkup(buttons))
 
+    @ubot.on_callback_query(filters=Filters.regex(pattern=r"^prvtmsg$"))
+    async def prvt_msg(_, c_q: CallbackQuery):
+        if c_q.from_user.id == PRVT_MSG['_id'] or c_q.from_user.id == Config.OWNER_ID:
+            await c_q.answer(PRVT_MSG['msg'], show_alert=True)
+        else:
+            user = PRVT_MSG['name']
+            await c_q.answer(
+                f"Only {user} can see this Private Msg... 😔", show_alert=True)
+
     def is_filter(name: str) -> bool:
         split_ = name.split('.')
         return bool(split_[0] and len(split_) == 2)
@@ -334,15 +343,6 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         buttons = [tmp_btns] + buttons
         return text, buttons
 
-
-    @ubot.on_callback_query(filters=Filters.regex(pattern=r"^prvtmsg$"))
-    async def prvt_msg_cq(_, c_q: CallbackQuery):
-        if c_q.from_user.id == PRVT_MSG['_id'] or c_q.from_user.id == Config.OWNER_ID:
-            await c_q.answer(PRVT_MSG["msg"], show_alert=True)
-        else:
-            await c_q.answer(
-                f"Sorry, you can't see this Private Msg... 😔", show_alert=True)
-
     @ubot.on_inline_query()
     async def inline_answer(_, inline_query: InlineQuery):
         results = [
@@ -387,15 +387,16 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
             if '-' in inline_query.query:
                 username, msg = inline_query.query.split('-', maxsplit=1)
                 PRVT_MSG.clear()
-                prvt_msg = [[InlineKeyboardButton("Show Message 🔐", callback_data="prvtmsg")]]
+                prvte_msg = [[InlineKeyboardButton("Show Message 🔐", callback_data="prvtmsg")]]
                 try:
-                    user = await userge.get_users(username.strip())
+                    user = await userge.get_user_dict(username.strip())
                 except Exception:
                     return
 
-                PRVT_MSG['_id'] = user.id
+                PRVT_MSG['_id'] = user['id']
+                PRVT_MSG['name'] = user['mention']
                 PRVT_MSG['msg'] = msg.strip()
-                msg_c = f"🔒 A private message to {user.username}, Only he/she can open it."
+                msg_c = f"🔒 A private message to {user['mention']}, Only he/she can open it."
                 results.append(
                     InlineQueryResultArticle(
                         id=uuid4(),
@@ -403,7 +404,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                         input_message_content=InputTextMessageContent(msg_c),
                         description="Only he/she can open it",
                         thumb_url="https://imgur.com/download/Inyeb1S",
-                        reply_markup=InlineKeyboardMarkup(prvt_msg)
+                        reply_markup=InlineKeyboardMarkup(prvte_msg)
                     )
                 )
         await inline_query.answer(results=results, cache_time=1)
