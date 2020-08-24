@@ -61,7 +61,6 @@ async def helpme(message: Message) -> None:  # pylint: disable=missing-function-
                      or plugins[key].enabled_commands[0].name.lstrip(Config.CMD_TRIGGER) != key)):
             commands = plugins[key].enabled_commands
             out_str = f"""⚔ <b><u>(<code>{len(commands)}</code>) Command(s) Available</u></b>
-
 🔧 <b>Plugin:</b>  <code>{key}</code>
 📘 <b>Doc:</b>  <code>{plugins[key].doc}</code>\n\n"""
             for i, cmd in enumerate(commands, start=1):
@@ -278,7 +277,6 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         pos_list = cur_pos.split('|')
         plg = userge.manager.plugins[pos_list[2]]
         text = f"""🗃 **--Plugin Status--** 🗃
-
 🎭 **Category** : `{pos_list[1]}`
 🔖 **Name** : `{plg.name}`
 📝 **Doc** : `{plg.doc}`
@@ -389,18 +387,18 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 PRVT_MSG.clear()
                 prvte_msg = [[InlineKeyboardButton("Show Message 🔐", callback_data="prvtmsg")]]
                 try:
-                    user = await ubot.get_user_dict(username.strip())
+                    user = await userge.get_user_dict(username.strip())
                 except Exception:
                     return
 
                 PRVT_MSG['_id'] = user['id']
-                PRVT_MSG['name'] = user['mention']
+                PRVT_MSG['name'] = user['flname']
                 PRVT_MSG['msg'] = msg.strip()
                 msg_c = f"🔒 A private message to {user['mention']}, Only he/she can open it."
                 results.append(
                     InlineQueryResultArticle(
                         id=uuid4(),
-                        title=f"A Private Msg to {user.first_name}",
+                        title=f"A Private Msg to {user['fname']}",
                         input_message_content=InputTextMessageContent(msg_c),
                         description="Only he/she can open it",
                         thumb_url="https://imgur.com/download/Inyeb1S",
